@@ -12,7 +12,7 @@ public class Main {
         time = 0;
 
         //Create intersection
-        Intersection intersection = new Intersection();
+        Intersection intersection = new Intersection(new Position(12,10));
         Random rnd = new Random();
         while(true){
 

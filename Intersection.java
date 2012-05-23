@@ -12,14 +12,14 @@ public class Intersection {
     public static int green = 1;
 
 
-    public Intersection(){    //for now it just creates 1 road, we can change this later
+    public Intersection(Position p){    //for now it just creates 2 roads, we can change this later
+        this.pos = p;
         roads = new LinkedList<Road>();
         lightState = new ArrayList<Integer>();
-        Road r = new Road(0,10);
+        Road r = new Road(Road.horizontal,pos.getY());
         roads.add(r);
-        //Road s = new Road(1, 12);
-        //roads.add(s);
-        pos = new Position(12,10); //TODO: fix this to work out position
+        Road s = new Road(Road.vertical, pos.getX());
+        roads.add(s);
     }
 
     public List<Road> getRoads() {
