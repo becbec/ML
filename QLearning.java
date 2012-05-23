@@ -1,16 +1,9 @@
 package Ass01.ML;
 
 import java.util.HashMap;
-import java.util.Random;
+import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Rebecca
- * Date: 22/05/12
- * Time: 7:05 PM
- * To change this template use File | Settings | File Templates.
- */
-
+// init qvalue as this? + 0.0000000000000000001 * Math.random() ) );
 
 public class QLearning {
     private HashMap<LState, HashMap<String, Double>> SAPairs;  // Maping of actions to pair to rewards
@@ -24,35 +17,48 @@ public class QLearning {
         alpha = 0.1;
     }
 
-    public void performLearning(int[] distToInt, int[] lightSetting) {
-        LState s = new LState(distToInt, lightSetting);
+    public void performLearning(int[] distToInt, List<Integer> lightState) {
+        LState s = null;
         String nextMove = nextMove();
 
-        if (SAPairs.containsKey(s)) {
-            // Update the reward of a current state-action pair
+        // Check to see if this state already exists
+        for (LState tmp: SAPairs.keySet()) {
+            if (tmp.getDistToInt().equals(distToInt) && tmp.getLightState().equals(lightState)) {
+                s = tmp;
+            }
+        }
+
+        // State exists
+        if (s != null) {
+            System.out.println("s is not null");
+            // Update the reward of a current state-action pair if it exists
             if (SAPairs.get(s).containsKey(nextMove)) {
+                System.out.println("s-a pair exists");
                 double currentValue = SAPairs.get(s).get(nextMove);
                 SAPairs.get(s).put(nextMove, updateQValue(currentValue, s.getReward()));
-            // Add the new action and give it a reward
+            // State-action pair doesn't exist so add the new action and give it a qValue
             } else {
-                SAPairs.get(s).put(nextMove, 0.0);
+                System.out.println("s-a pair does not exist");
+                SAPairs.get(s).put(nextMove, 0.0);  // TODO: figure out what the q-value starts at
             }
         // Add the new state, action and reward
         }  else {
+            System.out.println("s is null");
+            s = new LState(distToInt, lightState);
             SAPairs.put(s, new HashMap());
-            SAPairs.get(s).put(nextMove, 0.0);
+            SAPairs.get(s).put(nextMove, 0.0);  // TODO: figure out what the q-value starts at
         }
     }
 
-    public String optimalPlay(int[] distToInt, int[] lightSetting) {
-        LState s = new LState(distToInt, lightSetting);
+    public String optimalPlay(int[] distToInt, List<Integer> lightState) {
+        LState s = new LState(distToInt, lightState);
         HashMap<String, Double> tmp = SAPairs.get(s);
         String optimalMove = "";
-        double highestReward = -1;
+        double highestQValue = -2;
 
         for (String key : tmp.keySet()) {
-            if (tmp.get(key) > highestReward) {
-                highestReward = tmp.get(key);
+            if (tmp.get(key) > highestQValue) {
+                highestQValue = tmp.get(key)+s.getReward();
                 optimalMove = key;
             }
         }
@@ -67,27 +73,35 @@ public class QLearning {
 
 
     private String nextMove() {
-        Random rand = new Random();
-        String move = "";
+        //TODO: need to actually decide how to make the next move...
 
-        // need to actually decide how to make the next move...
-
-        return move;
+        return null;
     }
 
 
-    private double updateQValue(double currentValue, int reward) {
-        // Somehow need to write how to update the reward...
+    private double updateQValue(double currentQ, int reward) {
+        //TODO: Somehow need to write how to update the reward...
+        //TODO: need to write getting maxQ/figure out what that is.
 
-        /* this_Q = policy.getQValue( state, action );
-		    next_Q = policy.getQValue( newstate, newaction );
+        //double newQ = currentQ + alpha * (reward + gamma * maxQ - currentQ);
 
-		    new_Q = this_Q + alpha * ( reward + gamma * next_Q - this_Q );
+        /*action = selectAction( state );
+		    		newstate = thisWorld.getNextState( action );
+				    reward = thisWorld.getReward();
 
-		    policy.setQValue( state, action, new_Q );*/
+				    this_Q = policy.getQValue( state, action );
+				    max_Q = policy.getMaxQValue( newstate );
+
+				    // Calculate new Value for Q
+				    new_Q = this_Q + alpha * ( reward + gamma * max_Q - this_Q );
+				    policy.setQValue( state, action, new_Q );
+
+				    // Set state to the new state.
+				    state = newstate;*/
 
 
         return 0;
+        //return newQ;
     }
 
 
