@@ -13,15 +13,32 @@ public class LState {
     private int[] distToInt;                        // Distance of closet car to intersection from each road
     private int[] lightSetting;                     // What the lights are on at each road
     private int lightDelay;                         // Light delay?
+    private int reward;
 
     public LState (int[] distToInt, int[] lightSetting) {
         this.distToInt = distToInt;
         this.lightSetting = lightSetting;
         lightDelay = 0;
+        reward = initReward();
     }
 
     public int[] getDistToInt() {
         return distToInt;
+    }
+
+    public int getReward() {
+        return reward;
+    }
+
+    // Set the inital reward based on assignment criteria for being in this state
+    private int initReward() {
+        int reward = 0;
+        for (int i = 0; i < lightSetting.length; i++) {
+            if (lightSetting[i] == 1 && distToInt[i] != 9) {
+                reward = -1;
+            }
+        }
+        return reward;
     }
 
     @Override
