@@ -10,9 +10,10 @@ public class Main {
     public static void main(String [] args){
         System.out.println("Hello, World");
         time = 0;
-        //Create intersection
-        Intersection intersection = new Intersection(); //pass in number of roads later? //for now just generates 1
 
+        //Create intersection
+        Intersection intersection = new Intersection();
+        Random rnd = new Random();
         while(true){
 
             if (time%10 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
@@ -37,19 +38,30 @@ public class Main {
 
                 while (carItr.hasNext()){
 
-                    //move forward  //need to double check, not queued at light
+                    //move forward - double check, not queued at light
                     ((Car) carItr).moveCar(obstacle, ((Road) roadItr).getDirection());
 
                     //remove car if necessary
                     if (((Car) carItr).removeCar(intersection.getPos(),((Road) roadItr).getDirection())) {
                         ((Road) roadItr).removeCar();
-
+                        obstacle = new Position(-1,-1);
                     } else {
                         obstacle = ((Car) carItr).getPos();
                     }
 
                 }
-                //TODO:potentially add car(s)
+                if (time%(rnd.nextInt(10)+5)==0) {   //IS THIS CORRECT?
+                    Position p = new Position(0,0);
+                    if (((Road) roadItr).getDirection() == Road.horizontal){
+                       p.setY(((Road) roadItr).getOffset());
+                    } else if (((Road) roadItr).getDirection() == Road.vertical) {
+                        p.setX(((Road) roadItr).getOffset());
+                    }
+
+                    Car c = new Car(p,speed);
+                    ((Road) roadItr).addCar(c);
+                }
+
             }
 
             time++;

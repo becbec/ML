@@ -17,9 +17,9 @@ public class Intersection {
         lightState = new ArrayList<Integer>();
         Road r = new Road(0,10);
         roads.add(r);
-        pos = new Position(12,10); //TODO: fix this to work out position
         //Road s = new Road(1, 12);
         //roads.add(s);
+        pos = new Position(12,10); //TODO: fix this to work out position
     }
 
     public List<Road> getRoads() {

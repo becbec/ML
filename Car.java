@@ -27,7 +27,7 @@ public class Car {
 
     //for now cars only travel in increasing direction.
     // If we decide to add two-way roads then we will need to change road to have 4 directions rather than 2
-    public void moveCar(Position closestObstacle, int roadDirection) { //obstacle could refer to car in front or red light in front
+    public void moveCar(Position closestObstacle, int roadDirection) { //obstacle could refer to car in front or red light in front (set to -1,-1 if no obstacle in front)
         Position temp = this.pos;
         if (roadDirection == Road.horizontal) {
            temp.setX(temp.getX() + this.speed);

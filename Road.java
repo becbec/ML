@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Road {
     private LinkedList<Car> cars;
-    private int direction; //0 is horizontal, 1 is vertical
+    private int direction;
     private int offset;
     public static int horizontal = 0;
     public static int vertical = 1;
