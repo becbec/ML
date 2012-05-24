@@ -10,11 +10,15 @@ public class Main {
     public static void main(String [] args){
         System.out.println("Hello, World");
         time = 0;
+        int k = 0;
 
         //Create intersection
         Intersection intersection = new Intersection(new Position(12,10));
         Random rnd = new Random();
-        while(true){
+        QLearning ql = new QLearning();
+
+        while(k < 3){
+            k++;
 
             if (time%10 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
                 for (int i=0; i < intersection.getNumRoads(); i++){
@@ -22,47 +26,68 @@ public class Main {
                 }
             }
 
-            ListIterator roadItr = intersection.getRoads().listIterator();
-            ListIterator lightItr = intersection.getLightState().listIterator();
+            ListIterator<Road> roadItr = intersection.getRoads().listIterator();
+            ListIterator<Integer> lightItr = intersection.getLightState().listIterator();
             Position obstacle;
             if (lightItr.equals(Intersection.red)) {
                 obstacle = intersection.getPos();
             }
-            while(roadItr.hasNext() && lightItr.hasNext()  )
+
+            while(roadItr.hasNext() && lightItr.hasNext())
             {
+                Road nextRoad = roadItr.next();
+
                 obstacle = new Position(-1,-1);
                 if (lightItr.equals(Intersection.red)) {
                     obstacle = intersection.getPos();
                 }
-                ListIterator carItr = ((Road) roadItr).getCars().listIterator();
+                ListIterator<Car> carItr = nextRoad.getCars().listIterator();
 
                 while (carItr.hasNext()){
-
+                    Car nextCar = carItr.next();
                     //move forward - double check, not queued at light
-                    ((Car) carItr).moveCar(obstacle, ((Road) roadItr).getDirection());
+                    nextCar.moveCar(obstacle, nextRoad.getDirection());
 
                     //remove car if necessary
-                    if (((Car) carItr).removeCar(intersection.getPos(),((Road) roadItr).getDirection())) {
-                        ((Road) roadItr).removeCar();
+                    if (nextCar.removeCar(intersection.getPos(),nextRoad.getDirection())) {
+                        nextRoad.removeCar();
                         obstacle = new Position(-1,-1);
                     } else {
-                        obstacle = ((Car) carItr).getPos();
+                        obstacle = nextCar.getPos();
                     }
 
                 }
                 if (time%(rnd.nextInt(10)+5)==0) {   //IS THIS CORRECT?
                     Position p = new Position(0,0);
-                    if (((Road) roadItr).getDirection() == Road.horizontal){
-                       p.setY(((Road) roadItr).getOffset());
-                    } else if (((Road) roadItr).getDirection() == Road.vertical) {
-                        p.setX(((Road) roadItr).getOffset());
+                    if (nextRoad.getDirection() == Road.horizontal){
+                       p.setY(nextRoad.getOffset());
+                    } else if (nextRoad.getDirection() == Road.vertical) {
+                        p.setX(nextRoad.getOffset());
                     }
 
                     Car c = new Car(p,speed);
-                    ((Road) roadItr).addCar(c);
+                    nextRoad.addCar(c);
                 }
 
             }
+
+
+
+            ListIterator<Position> closetPosItr = intersection.getClosestCarsInt().listIterator();
+            List<Integer> closetCars = new ArrayList<Integer>();
+            Position intPos = intersection.getPos();
+
+            while (closetPosItr.hasNext()) {
+                Position nextPos = closetPosItr.next();
+                if (nextPos.equals(intPos)) {
+                    closetCars.add(9);
+                } else {
+                    closetCars.add(Math.abs(nextPos.getX() - intPos.getY()) +
+                            Math.abs(nextPos.getY() - intPos.getY()));
+                }
+            }
+
+            ql.performLearning(closetCars, intersection.getLightState());
 
             time++;
 

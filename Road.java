@@ -35,5 +35,5 @@ public class Road {
     public int getOffset() {
         return offset;
     }
-
 }
+

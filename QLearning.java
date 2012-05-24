@@ -17,9 +17,13 @@ public class QLearning {
         alpha = 0.1;
     }
 
-    public void performLearning(int[] distToInt, List<Integer> lightState) {
+    public void performLearning(List<Integer> distToInt, List<Integer> lightState) {
         LState s = null;
         String nextMove = nextMove();
+
+        for (int i = 0; i < distToInt.size(); i++) {
+            System.out.println("number for state is: " +distToInt.get(i));
+        }
 
         // Check to see if this state already exists
         for (LState tmp: SAPairs.keySet()) {
@@ -50,7 +54,7 @@ public class QLearning {
         }
     }
 
-    public String optimalPlay(int[] distToInt, List<Integer> lightState) {
+    public String optimalPlay(List<Integer> distToInt, List<Integer> lightState) {
         LState s = new LState(distToInt, lightState);
         HashMap<String, Double> tmp = SAPairs.get(s);
         String optimalMove = "";

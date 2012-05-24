@@ -5,19 +5,19 @@ import org.omg.CORBA.PUBLIC_MEMBER;
 import java.util.List;
 
 public class LState {
-    private int[] distToInt;                        // Distance of closet car to intersection from each road
+    private List<Integer> distToInt;                        // Distance of closet car to intersection from each road
     private List<Integer> lightState;                     // What the lights are on at each road
     private int lightDelay;                         // Light delay?
     private int reward;
 
-    public LState (int[] distToInt, List<Integer> lightState) {
+    public LState (List<Integer> distToInt, List<Integer> lightState) {
         this.distToInt = distToInt;
         this.lightState = lightState;
         lightDelay = 0;
         reward = initReward();
     }
 
-    public int[] getDistToInt() {
+    public List<Integer> getDistToInt() {
         return distToInt;
     }
 
@@ -37,7 +37,7 @@ public class LState {
     private int initReward() {
         int reward = 0;
         for (int i = 0; i < lightState.size(); i++) {
-            if (lightState.get(i) == Intersection.red && distToInt[i] != 9) {
+            if (lightState.get(i) == Intersection.red && distToInt.get(i) != 9) {
                 reward = -1;
             }
         }
