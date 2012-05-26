@@ -20,6 +20,9 @@ public class Main {
         while(k < 3){
             k++;
 
+            // Get the next move and exectue it
+            ql.getNextMove(getClosetPos(intersection), intersection.getLightState());
+
             if (time%10 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
                 for (int i=0; i < intersection.getNumRoads(); i++){
                     intersection.setLightState(i, (intersection.getLightState(i)+1)%2); //toggle light state
@@ -71,27 +74,34 @@ public class Main {
 
             }
 
-
-
-            ListIterator<Position> closetPosItr = intersection.getClosestCarsInt().listIterator();
-            List<Integer> closetCars = new ArrayList<Integer>();
-            Position intPos = intersection.getPos();
-
-            while (closetPosItr.hasNext()) {
-                Position nextPos = closetPosItr.next();
-                if (nextPos.equals(intPos)) {
-                    closetCars.add(9);
-                } else {
-                    closetCars.add(Math.abs(nextPos.getX() - intPos.getY()) +
-                            Math.abs(nextPos.getY() - intPos.getY()));
-                }
-            }
-
-            ql.performLearning(closetCars, intersection.getLightState());
+            // Update the qValues
+            ql.updateQValue(getClosetPos(intersection), intersection.getLightState());
+            //ql.performLearning(getClosetPos(intersection), intersection.getLightState());
 
             time++;
 
         }
+    }
+
+    public static List<Integer> getClosetPos(Intersection intersection) {
+        ListIterator<Position> closetPosItr = intersection.getClosestCarsInt().listIterator();
+        List<Integer> closetCars = new ArrayList<Integer>();
+        Position intPos = intersection.getPos();
+
+        while (closetPosItr.hasNext()) {
+            Position nextPos = closetPosItr.next();
+            if (nextPos.equals(intPos)) {
+                closetCars.add(9);
+            } else {
+                int x =  (Math.abs(nextPos.getX() - intPos.getX()) +
+                        Math.abs(nextPos.getY() - intPos.getY()));
+                if (x > 9) {
+                    x = 9;
+                }
+                closetCars.add(x);
+            }
+        }
+        return closetCars;
     }
 
 }
