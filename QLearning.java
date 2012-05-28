@@ -1,17 +1,16 @@
 package Ass01.ML;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 // init qvalue as this? + 0.0000000000000000001 * Math.random() ) );
 
 public class QLearning {
-    private HashMap<LState, HashMap<String, Double>> SAPairs;  // Maping of actions to pair to rewards
+    private HashMap<LState, HashMap<Boolean, Double>> SAPairs;  // Maping of actions to pair to rewards
     private LState state;                                      // Current state we are looking at
-    private String nextMove;                                   // Store the move that was made
+    private boolean nextMove;                                   // Store the move that was made
+    private int delayFactor;                                   // Delay ?
 
+    private final int delay = 3;
     private final double gamma;                                // Discount factor
     private final double alpha;                                // Learning rate
 
@@ -24,14 +23,15 @@ public class QLearning {
      */
 
     public QLearning () {
-        SAPairs = new HashMap<LState, HashMap<String, Double>>();
+        SAPairs = new HashMap<LState, HashMap<Boolean, Double>>();
         gamma = 0.9;
         alpha = 0.1;
         state = null;
-        nextMove = "";
+        nextMove = false;
+        delayFactor = 0;
     }
 
-    public String getNextMove(List<Integer> distToInt, List<Integer> lightState) {
+    public boolean getNextMove(List<Integer> distToInt, List<Integer> lightState) {
         nextMove = chooseNextMove();
 
         updateSAPair(distToInt, lightState, nextMove);
@@ -57,6 +57,48 @@ public class QLearning {
         SAPairs.get(state).put(nextMove, newQ);
     }
 
+    public boolean getBestAction(List<Integer> distToInt, List<Integer> lightState) {
+        double maxQ = -Double.MAX_VALUE;
+        int selectedAction = -1;
+        boolean nextBestMove = false;
+        LState s = null;
+        HashMap<Boolean, Double> actions = SAPairs.get(s);
+        int maxDV = 0;
+        List<Boolean> doubleValues = new ArrayList<Boolean>();
+        double epsilon = 0.1;
+        Random rand = new Random();
+
+        for (LState tmp: SAPairs.keySet()) {
+            if (tmp.getDistToInt().equals(distToInt) && tmp.getLightState().equals(lightState)) {
+                s = tmp;
+            }
+        }
+
+        if (s != null && 1-epsilon > rand.nextDouble()) {
+            for (Boolean key : actions.keySet()) {
+                if (actions.get(key) > maxQ) {
+                    maxQ = actions.get(key)+s.getReward();
+                    nextBestMove = key;
+                } else if(actions.get(key) == maxQ ) {
+                    maxDV++;
+                    doubleValues.add(key);
+                }
+            }
+
+            if(maxDV > 0) {
+                int randomIndex = (int) ( Math.random() * ( maxDV + 1 ) );
+                nextBestMove = doubleValues.get(randomIndex);
+            }
+        }
+
+        if(selectedAction == -1) {
+            System.out.println("RANDOM Choice !" );
+            nextBestMove = chooseNextMove();
+        }
+
+        return nextBestMove;
+    }
+
     private double maxQ(LState s) {
         List<Double> nums = new ArrayList<Double>();
 
@@ -74,16 +116,26 @@ public class QLearning {
 
     }
 
-    private String chooseNextMove() {
-        //TODO: Actually need to write this function
-        return "";
+    private Boolean chooseNextMove() {
+        //TODO: include light delay in this function...
+        Random rand = new Random();
+        Boolean nextMove;
+
+        if (rand.nextDouble() < 0.5 && delayFactor >= delay) {
+            nextMove = true;
+        } else {
+            nextMove = false;
+            delayFactor++;
+        }
+
+        return nextMove;
     }
 
-    private void updateSAPair(List<Integer> distToInt, List<Integer> lightState, String nextMove) {
+    private void updateSAPair(List<Integer> distToInt, List<Integer> lightState, Boolean nextMove) {
         state = null;
 
-        for (int i = 0; i < distToInt.size(); i++) {
-            System.out.println("number for the state is: " +distToInt.get(i));
+        for (Integer aDistToInt : distToInt) {
+            System.out.println("number for the state is: " + aDistToInt);
         }
 
         // Check to see if this state already exists
@@ -113,6 +165,10 @@ public class QLearning {
 
     }
 
+    /*
+    optimal find the maxq else if there are n with same maxq pick random out of the n move
+
+     */
 
     /*public void performLearning(List<Integer> distToInt, List<Integer> lightState) {
         LState s = null;
@@ -174,14 +230,14 @@ public class QLearning {
 
 
     private String nextMove() {
-        //TODO: need to actually decide how to make the next move...
+
 
         return null;
     } */
 
 
    // private double updateQValue(double currentQ, int reward) {
-        //TODO: need to write getting maxQ/figure out what that is.
+
 
         //double newQ = currentQ + alpha * (reward + gamma * maxQ - currentQ);
 

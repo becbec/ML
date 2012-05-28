@@ -16,14 +16,16 @@ public class Main {
         Intersection intersection = new Intersection(new Position(12,10));
         Random rnd = new Random();
         QLearning ql = new QLearning();
+        boolean nextMove = false;
 
         while(k < 3){
             k++;
 
             // Get the next move and exectue it
-            ql.getNextMove(getClosetPos(intersection), intersection.getLightState());
+            nextMove = ql.getNextMove(getClosetPos(intersection), intersection.getLightState());
 
-            if (time%10 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
+            if (nextMove) {
+            //if (time%10 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
                 for (int i=0; i < intersection.getNumRoads(); i++){
                     intersection.setLightState(i, (intersection.getLightState(i)+1)%2); //toggle light state
                 }
