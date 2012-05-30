@@ -29,8 +29,8 @@ public class LState {
         return lightDelay;
     }
 
-    public void setLightDelay() {
-        // TODO: update light delay
+    public void setLightDelay(int lightDelay) {
+        this.lightDelay = lightDelay;
     }
 
     public int getReward() {

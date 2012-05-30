@@ -44,7 +44,7 @@ public class QLearning {
 
         for (LState tmp: SAPairs.keySet()) {
             if (tmp.getDistToInt().equals(distToInt) && tmp.getLightState().equals(lightState)) {
-                s = tmp;
+                s = tmp; // TODO: add light delay as a check also?
             }
         }
 
@@ -123,9 +123,12 @@ public class QLearning {
 
         if (rand.nextDouble() < 0.5 && delayFactor >= delay) {
             nextMove = true;
+            System.out.println("Switch lights = true");
+            delayFactor = 0;
         } else {
             nextMove = false;
             delayFactor++;
+            System.out.println("Switch light = false");
         }
 
         return nextMove;
@@ -141,7 +144,7 @@ public class QLearning {
         // Check to see if this state already exists
         for (LState tmp: SAPairs.keySet()) {
             if (tmp.getDistToInt().equals(distToInt) && tmp.getLightState().equals(lightState)) {
-                state = tmp;
+                state = tmp;   // TODO: add lightdelay also?
             }
         }
 
@@ -159,6 +162,7 @@ public class QLearning {
         }   else {
             System.out.println("s is null");
             state = new LState(distToInt, lightState);
+            state.setLightDelay(delayFactor);
             SAPairs.put(state, new HashMap());
             SAPairs.get(state).put(nextMove, 0.0);
         }
