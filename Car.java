@@ -28,19 +28,35 @@ public class Car {
     //for now cars only travel in increasing direction.
     // If we decide to add two-way roads then we will need to change road to have 4 directions rather than 2
     public void moveCar(Position closestObstacle, int roadDirection) { //obstacle could refer to car in front or red light in front (set to -1,-1 if no obstacle in front)
-        Position temp = this.pos;
+        Position temp = null;
         if (roadDirection == Road.horizontal) {
-           temp.setX(temp.getX() + this.speed);
+            temp = new Position(this.getPos().getX()+this.speed, this.getPos().getY());
         } else if (roadDirection == Road.vertical) {
-           temp.setY(temp.getY() + this.speed);
+            temp = new Position(this.getPos().getX(), this.getPos().getY()+this.speed);
         }
+
         if (!(temp.getX() == closestObstacle.getX() && temp.getY() == closestObstacle.getY())) {
             this.setPos(temp);
+        } else {
+            System.out.println("DO NOT UPDATEEEEEE");
         }
-
     }
 
-    public boolean removeCar(Position intersectionPos, int roadDirection) {
+    public boolean removeCar(Position edgeBoader, int roadDirection) {
+        if (roadDirection == Road.horizontal) {
+            if (this.getPos().getX() > 100) {
+                return true;
+            }
+        } else if (roadDirection == Road.vertical) {
+            if (this.getPos().getY() > 100) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /*public boolean removeCar(Position intersectionPos, int roadDirection) {
         if (roadDirection == Road.horizontal) {
           if (this.pos.getX() > intersectionPos.getX()) {
            return true;
@@ -52,6 +68,6 @@ public class Car {
         }
 
         return false;
-    }
+    }*/
 
 }

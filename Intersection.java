@@ -7,7 +7,6 @@ public class Intersection {
     private List<Road> roads;
     private List<Integer> lightState; //0 = red, 1 = green
     private Position pos;
-    private List<Car> closetCarInt; // Closest car of each road to the intersection
 
     public static int red = 1;
     public static int green = 0;
@@ -16,12 +15,11 @@ public class Intersection {
     public Intersection(Position p){    //for now it just creates 2 roads, we can change this later
         this.pos = p;
         roads = new LinkedList<Road>();
-        lightState = new ArrayList<Integer>();
+        lightState = new Vector<Integer>();
         Road r = new Road(Road.horizontal,pos.getY());
         roads.add(r);
         Road s = new Road(Road.vertical, pos.getX());
         roads.add(s);
-        closetCarInt = new ArrayList<Car>();
         //set lights one to red, one to green
         lightState.add(green);
         lightState.add(red);
@@ -57,12 +55,16 @@ public class Intersection {
         ListIterator<Road> roadItr = this.roads.listIterator();
         Position carPos = null;
 
-        while(roadItr.hasNext()){
+        // For if we continue cars moving
+        while (roadItr.hasNext()) {
             boolean exit = false;
-            ListIterator<Car> carItr = roadItr.next().getCars().listIterator();
+            Road nextRoad = roadItr.next();
+            ListIterator<Car> carItr = nextRoad.getCars().listIterator();
             while (carItr.hasNext() && !exit) {
                 carPos = carItr.next().getPos();
-                if (!carPos.equals(this.getPos())) {
+                if (nextRoad.getDirection() == Road.horizontal && carPos.getX() < this.getPos().getX()) {
+                    exit = true;
+                } else if (nextRoad.getDirection() == Road.vertical && carPos.getY() < this.getPos().getY()) {
                     exit = true;
                 }
             }
@@ -72,6 +74,7 @@ public class Intersection {
             }
             closest.add(carPos);
         }
+
         return closest;
     }
 

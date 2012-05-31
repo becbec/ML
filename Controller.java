@@ -20,6 +20,7 @@ public class Controller implements GLEventListener {
     Intersection intersection = new Intersection(new Position(50,50));
     QLearning ql = new QLearning();
     int scale = 6;
+    boolean nextMove;
 
     public static void main(String [] args){
     	Controller c = new Controller();
@@ -51,7 +52,7 @@ public class Controller implements GLEventListener {
 	    System.out.println("Hello, World");
         int k = 0;
         Random rnd = new Random();
-        
+
         while(k < 300){
 			try {
 				Thread.sleep(100);
@@ -63,9 +64,16 @@ public class Controller implements GLEventListener {
             k++;
 
             // Get the next move and execute it
-            ql.getNextMove(getClosetPos(intersection), intersection.getLightState());
+            if (k < 200) {
+                nextMove = ql.getNextMove(getClosetPos(intersection), intersection.getLightState());
+            } else {
+                nextMove = ql.getBestAction(getClosetPos(intersection), intersection.getLightState());
+                System.out.println("YEAHHHH LEARNINNGG AND STUFF");
+            }
 
-            if (time%10 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
+
+            if (nextMove) {
+            //if (time%10 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
                 for (int i=0; i < intersection.getNumRoads(); i++){
                     intersection.setLightState(i, (intersection.getLightState(i)+1)%2); //toggle light state
                 }
@@ -74,34 +82,36 @@ public class Controller implements GLEventListener {
             ListIterator<Road> roadItr = intersection.getRoads().listIterator();
             ListIterator<Integer> lightItr = intersection.getLightState().listIterator();
             Position obstacle;
-            if (lightItr.equals(Intersection.red)) {
-                obstacle = intersection.getPos();
-            }
 
             while(roadItr.hasNext() && lightItr.hasNext())
             {
                 Road nextRoad = roadItr.next();
 
                 obstacle = new Position(-1,-1);
-                if (lightItr.equals(Intersection.red)) {
+                Integer nextLight = lightItr.next();
+                if (nextLight.equals(Intersection.red)) {
                     obstacle = intersection.getPos();
+                    System.out.println("the intersection is red obstacle is at x "+obstacle.getX()+ " y "+obstacle.getY());
+                } else {
+                    System.out.println("the lights are green");
                 }
+
                 ListIterator<Car> carItr = nextRoad.getCars().listIterator();
 
                 while (carItr.hasNext()){
                     Car nextCar = carItr.next();
+
                     //move forward - double check, not queued at light
                     nextCar.moveCar(obstacle, nextRoad.getDirection());
-
-                    //remove car if necessary
-                    if (nextCar.removeCar(intersection.getPos(),nextRoad.getDirection())) {
-                        nextRoad.removeCar();
-                        obstacle = new Position(-1,-1);
+                    if (nextLight.equals(Intersection.red)) {
+                        obstacle = intersection.getPos();
+                    } else if (nextCar.removeCar(intersection.getPos(), nextRoad.getDirection())) {
+                        obstacle = new Position(-1, -1);
                     } else {
                         obstacle = nextCar.getPos();
                     }
-
                 }
+
                 if (time%(rnd.nextInt(10)+5)==0) {   //IS THIS CORRECT?
                     Position p = new Position(0,0);
                     if (nextRoad.getDirection() == Road.horizontal){
@@ -115,9 +125,22 @@ public class Controller implements GLEventListener {
                 }
             }
 
+           // Remove cars from the intersection
+           List<Road> roads = intersection.getRoads();
+            for(int j = 0; j < intersection.getNumRoads(); j++) {
+                Road nextRoad = roads.get(j);
+                for (int i = 0; i < nextRoad.getCars().size(); i++) {
+                    Car nextCar = nextRoad.getCars().get(i);
+                    if (nextCar.removeCar(intersection.getPos(),nextRoad.getDirection())) {
+                        nextRoad.removeCar();
+                    }
+                }
+            }
+
             // Update the qValues
-            ql.updateQValue(getClosetPos(intersection), intersection.getLightState());
-            //ql.performLearning(getClosetPos(intersection), intersection.getLightState());
+            if (k < 200) {
+                ql.updateQValue(getClosetPos(intersection), intersection.getLightState());
+            }
 
             time++;
 
@@ -131,6 +154,7 @@ public class Controller implements GLEventListener {
 
         while (closetPosItr.hasNext()) {
             Position nextPos = closetPosItr.next();
+            System.out.println("clost pos is x " +nextPos.getX()+ " y "+nextPos.getY());
             if (nextPos.equals(intPos)) {
                 closetCars.add(9);
             } else {
@@ -186,7 +210,7 @@ public class Controller implements GLEventListener {
 	    }
 	    
 	    gl.glPushMatrix();
-	    drawIntersection(gl, intersection);
+	    //drawIntersection(gl, intersection);
 	    gl.glPopMatrix();
 	    
 	    gl.glPopMatrix(); //Scaling to screen popped

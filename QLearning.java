@@ -62,7 +62,7 @@ public class QLearning {
         int selectedAction = -1;
         boolean nextBestMove = false;
         LState s = null;
-        HashMap<Boolean, Double> actions = SAPairs.get(s);
+        //HashMap<Boolean, Double> actions = SAPairs.get(s);
         int maxDV = 0;
         List<Boolean> doubleValues = new ArrayList<Boolean>();
         double epsilon = 0.1;
@@ -74,21 +74,24 @@ public class QLearning {
             }
         }
 
-        if (s != null && 1-epsilon > rand.nextDouble()) {
-            for (Boolean key : actions.keySet()) {
-                if (actions.get(key) > maxQ) {
-                    maxQ = actions.get(key)+s.getReward();
-                    nextBestMove = key;
-                } else if(actions.get(key) == maxQ ) {
-                    maxDV++;
-                    doubleValues.add(key);
+        if (s != null) {
+            //if (1-epsilon > rand.nextDouble()) {
+                HashMap<Boolean, Double> actions = SAPairs.get(s);
+                for (Boolean key : actions.keySet()) {
+                    if (actions.get(key) > maxQ) {
+                        maxQ = actions.get(key)+s.getReward();
+                        nextBestMove = key;
+                    } else if(actions.get(key) == maxQ ) {
+                        maxDV++;
+                        doubleValues.add(key);
+                    }
                 }
-            }
 
-            if(maxDV > 0) {
-                int randomIndex = (int) ( Math.random() * ( maxDV + 1 ) );
-                nextBestMove = doubleValues.get(randomIndex);
-            }
+                if(maxDV > 0) {
+                    int randomIndex = (int) ( Math.random() * ( maxDV + 1 ) );
+                    nextBestMove = doubleValues.get(randomIndex);
+                }
+           // }
         }
 
         if(selectedAction == -1) {

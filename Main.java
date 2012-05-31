@@ -18,7 +18,7 @@ public class Main {
         QLearning ql = new QLearning();
         boolean nextMove = false;
 
-        while(k < 3){
+        while(k < 300){
             k++;
 
             // Get the next move and exectue it
