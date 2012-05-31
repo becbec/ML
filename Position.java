@@ -30,4 +30,15 @@ public class Position {
         this.x = p.x;
         this.y = p.y;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Position) {
+            Position tmp = (Position) o;
+            return (this.x == tmp.x && this.y == tmp.y);
+        }
+
+        return false;
+    }
+
 }
