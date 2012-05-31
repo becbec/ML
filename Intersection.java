@@ -8,8 +8,8 @@ public class Intersection {
     private List<Integer> lightState; //0 = red, 1 = green
     private Position pos;
 
-    public static int red = 0;
-    public static int green = 1;
+    public static int red = 1;
+    public static int green = 0;
 
 
     public Intersection(Position p){    //for now it just creates 2 roads, we can change this later
