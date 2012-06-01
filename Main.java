@@ -51,7 +51,7 @@ public class Main {
                 while (carItr.hasNext()){
                     Car nextCar = carItr.next();
                     //move forward - double check, not queued at light
-                    nextCar.moveCar(obstacle, nextRoad.getDirection());
+                    //nextCar.moveCar(obstacle, nextRoad.getDirection());
 
                     //remove car if necessary
                     if (nextCar.removeCar(intersection.getPos(),nextRoad.getDirection())) {

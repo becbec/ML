@@ -14,6 +14,10 @@ import javax.media.opengl.GLEventListener;
 
 import com.sun.opengl.util.FPSAnimator;
 
+//TODO: how to choose 90% greedy exploration - if no car waiting at the lights leave it red else switch it
+// choose how to switch it better
+//TODO: choose how to choose the best next option better.
+
 public class Controller implements GLEventListener {
     static int time;
     static int speed = 1;
@@ -21,6 +25,8 @@ public class Controller implements GLEventListener {
     QLearning ql = new QLearning();
     int scale = 6;
     boolean nextMove;
+    static int learningCount = 0;
+    static int playCount = 0;
 
     public static void main(String [] args){
     	Controller c = new Controller();
@@ -53,11 +59,11 @@ public class Controller implements GLEventListener {
         int k = 0;
         Random rnd = new Random();
 
-        while(k < 3000){
+        while(k < 12000){
         	
         	// Timeout to make the simulator run at a reasonable speed.
 			try {
-				Thread.sleep(100);
+				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -65,7 +71,7 @@ public class Controller implements GLEventListener {
             k++;
 
             // Get the next move and execute it
-            if (k < 200) {
+            if (k < 6000) {
                 nextMove = ql.getNextMove(getClosetPos(intersection), intersection.getLightState());
             } else {
                 nextMove = ql.getBestAction(getClosetPos(intersection), intersection.getLightState());
@@ -73,8 +79,8 @@ public class Controller implements GLEventListener {
             }
 
             // Update the state of the lights
-            //if (nextMove) {
-            if (time%100 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
+            if (nextMove) {
+            //if (time%100 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
                 for (int i=0; i < intersection.getNumRoads(); i++){
                     intersection.setLightState(i, (intersection.getLightState(i)+1)%2); //toggle light state
                 }
@@ -90,7 +96,7 @@ public class Controller implements GLEventListener {
                 Integer lightState = lightItr.next();
                 
                 ListIterator<Car> carItr = curRoad.getCars().listIterator();
-                Car prevCar = null;
+                Car prevCar;
                 Car curCar = null;
                 while (carItr.hasNext()){
                 	prevCar = curCar;
@@ -137,13 +143,16 @@ public class Controller implements GLEventListener {
             }
 
             // Update the qValues
-            if (k < 200) {
+            if (k < 6000) {
                 ql.updateQValue(getClosetPos(intersection), intersection.getLightState());
             }
 
             time++;
 
         }
+
+        System.out.println("learningCount = "+learningCount);
+        System.out.println("playCount = "+playCount);
     }
 
     public static List<Integer> getClosetPos(Intersection intersection) {
@@ -153,7 +162,6 @@ public class Controller implements GLEventListener {
 
         while (closetPosItr.hasNext()) {
             Position nextPos = closetPosItr.next();
-            System.out.println("clost pos is x " +nextPos.getX()+ " y "+nextPos.getY());
             if (nextPos.equals(intPos)) {
                 closetCars.add(9);
             } else {
@@ -162,6 +170,7 @@ public class Controller implements GLEventListener {
                 if (x > 9) {
                     x = 9;
                 }
+
                 closetCars.add(x);
             }
         }
