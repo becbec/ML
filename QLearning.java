@@ -66,6 +66,7 @@ public class QLearning {
         int maxDV = 0;
         List<Boolean> doubleValues = new ArrayList<Boolean>();
         double epsilon = 0.1;
+        Random rand = new Random();
 
         for (LState tmp: SAPairs.keySet()) {
             if (tmp.getDistToInt().equals(distToInt) && tmp.getLightState().equals(lightState)) {
@@ -74,7 +75,7 @@ public class QLearning {
         }
 
         if (s != null) {
-            //if (1-epsilon > rand.nextDouble()) {
+            if (1-epsilon > rand.nextDouble()) {
                 HashMap<Boolean, Double> actions = SAPairs.get(s);
                 for (Boolean key : actions.keySet()) {
                     if (actions.get(key) > maxQ) {
@@ -91,7 +92,7 @@ public class QLearning {
                     int randomIndex = random.nextInt(doubleValues.size());
                     nextBestMove = doubleValues.get(randomIndex);
                 }
-           // }
+           }
         }
 
         if(selectedAction == -1) {

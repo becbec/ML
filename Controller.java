@@ -44,7 +44,7 @@ public class Controller implements GLEventListener {
 		});
 
 		canvas.addGLEventListener(this);
-		FPSAnimator animator = new FPSAnimator(canvas, 30);
+		FPSAnimator animator = new FPSAnimator(canvas, 20);
         animator.start();
 	}
 	
@@ -53,11 +53,10 @@ public class Controller implements GLEventListener {
         int k = 0;
         Random rnd = new Random();
 
-        while(k < 300){
+        while(k < 3000){
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -72,8 +71,8 @@ public class Controller implements GLEventListener {
             }
 
 
-            if (nextMove) {
-            //if (time%10 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
+            //if (nextMove) {
+            if (time%10 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
                 for (int i=0; i < intersection.getNumRoads(); i++){
                     intersection.setLightState(i, (intersection.getLightState(i)+1)%2); //toggle light state
                 }
@@ -210,7 +209,7 @@ public class Controller implements GLEventListener {
 	    }
 	    
 	    gl.glPushMatrix();
-	    //drawIntersection(gl, intersection);
+	    drawIntersection(gl, intersection);
 	    gl.glPopMatrix();
 	    
 	    gl.glPopMatrix(); //Scaling to screen popped
@@ -244,8 +243,8 @@ public class Controller implements GLEventListener {
 		gl.glColor3f(0.2f,0.2f,0.2f);
 		gl.glVertex2d(0, 0);
 		gl.glVertex2d(0, 1000);
-		gl.glVertex2d(20, 1000);
-		gl.glVertex2d(20, 0);
+		gl.glVertex2d(10, 1000);
+		gl.glVertex2d(10, 0);
 	    gl.glEnd();
     }
     
@@ -254,7 +253,7 @@ public class Controller implements GLEventListener {
     	gl.glTranslated(p.getX()*10,p.getY()*10,0);
     	
 		gl.glBegin( GL.GL_POLYGON );
-		gl.glColor3f(0.2f,0.2f,1f);
+		gl.glColor3d(c.r,c.g,c.b);
 		gl.glVertex2d(0, 0);
 		gl.glVertex2d(0, 10);
 		gl.glVertex2d(10, 10);
@@ -263,16 +262,35 @@ public class Controller implements GLEventListener {
     }
     
     public void drawIntersection(GL gl, Intersection i) {
+    	gl.glPushMatrix();
+    	gl.glTranslated(i.getPos().getX()*10-10,i.getPos().getY()*10,0);
+    	gl.glBegin( GL.GL_POLYGON );
+    	if (i.getLightState().get(0) == Intersection.green) {
+    		gl.glColor3f(0.2f,1f,0.2f);
+    	} else {
+    		gl.glColor3f(1f,0.2f,0.2f);
+    	}
+		gl.glVertex2d(0, 0);
+		gl.glVertex2d(0, 10);
+		gl.glVertex2d(10, 10);
+		gl.glVertex2d(10, 0);
+	    gl.glEnd();
+    	gl.glPopMatrix();
+	    
+	    gl.glPushMatrix();
     	gl.glTranslated(i.getPos().getX()*10,i.getPos().getY()*10-10,0);
     	gl.glBegin( GL.GL_POLYGON );
-    	//if (i.getLightState(). == Intersection.green) {
+    	if (i.getLightState().get(1) == Intersection.green) {
     		gl.glColor3f(0.2f,1f,0.2f);
-    	//}
+    	} else {
+    		gl.glColor3f(1f,0.2f,0.2f);
+    	}
 		gl.glVertex2d(0, 0);
-		gl.glVertex2d(0, 20);
-		gl.glVertex2d(20, 20);
-		gl.glVertex2d(20, 0);
+		gl.glVertex2d(0, 10);
+		gl.glVertex2d(10, 10);
+		gl.glVertex2d(10, 0);
 	    gl.glEnd();
+	    gl.glPopMatrix();
     }
 
 }

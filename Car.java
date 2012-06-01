@@ -1,12 +1,22 @@
 package Ass01.ML;
 
+import java.awt.Color;
+
+import javax.media.opengl.GL;
+
 public class Car {
     private Position pos;
     private int speed;
+    public double r;
+    public double g;
+    public double b;
 
     public Car(Position p, int s) {
         pos = p;
         speed = s;
+        r = Math.random();
+        g = Math.random();
+        b = Math.random();
     }
 
     public Position getPos() {
