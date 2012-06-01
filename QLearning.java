@@ -88,7 +88,7 @@ public class QLearning {
                 }
 
                 if(maxDV > 0) {
-                    int randomIndex = (int) ( Math.random() * ( maxDV + 1 ) );
+                    int randomIndex = (int) (Math.random() % doubleValues.size());
                     nextBestMove = doubleValues.get(randomIndex);
                 }
            // }
