@@ -54,6 +54,8 @@ public class Controller implements GLEventListener {
         Random rnd = new Random();
 
         while(k < 3000){
+        	
+        	// Timeout to make the simulator run at a reasonable speed.
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -70,57 +72,55 @@ public class Controller implements GLEventListener {
                 System.out.println("YEAHHHH LEARNINNGG AND STUFF");
             }
 
-
+            // Update the state of the lights
             //if (nextMove) {
-            if (time%10 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
+            if (time%100 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
                 for (int i=0; i < intersection.getNumRoads(); i++){
                     intersection.setLightState(i, (intersection.getLightState(i)+1)%2); //toggle light state
                 }
             }
 
+            // Make an obstacle
             ListIterator<Road> roadItr = intersection.getRoads().listIterator();
-            ListIterator<Integer> lightItr = intersection.getLightState().listIterator();
-            Position obstacle;
+            ListIterator<Integer> lightItr = intersection.getLightState().listIterator();            
 
             while(roadItr.hasNext() && lightItr.hasNext())
             {
-                Road nextRoad = roadItr.next();
-
-                obstacle = new Position(-1,-1);
-                Integer nextLight = lightItr.next();
-                if (nextLight.equals(Intersection.red)) {
-                    obstacle = intersection.getPos();
-                    System.out.println("the intersection is red obstacle is at x "+obstacle.getX()+ " y "+obstacle.getY());
-                } else {
-                    System.out.println("the lights are green");
-                }
-
-                ListIterator<Car> carItr = nextRoad.getCars().listIterator();
-
+                Road curRoad = roadItr.next();
+                Integer lightState = lightItr.next();
+                
+                ListIterator<Car> carItr = curRoad.getCars().listIterator();
+                Car prevCar = null;
+                Car curCar = null;
                 while (carItr.hasNext()){
-                    Car nextCar = carItr.next();
+                	prevCar = curCar;
+                    curCar = carItr.next();
 
                     //move forward - double check, not queued at light
-                    nextCar.moveCar(obstacle, nextRoad.getDirection());
-                    if (nextLight.equals(Intersection.red)) {
-                        obstacle = intersection.getPos();
-                    } else if (nextCar.removeCar(intersection.getPos(), nextRoad.getDirection())) {
-                        obstacle = new Position(-1, -1);
-                    } else {
-                        obstacle = nextCar.getPos();
+                    Position lights = new Position(-1, -1);
+                    Position carInFront = new Position(-1, -1);
+                    if (lightState.equals(Intersection.red)) {
+                        lights = intersection.getPos();
+                    }
+                    if (prevCar != null){
+                        carInFront = prevCar.getPos();
+                    }
+                    if (curCar.canMoveCar(lights, curRoad.getDirection()) &&
+                    	curCar.canMoveCar(carInFront, curRoad.getDirection())) {
+                    	curCar.moveCar(curRoad.getDirection());
                     }
                 }
 
                 if (time%(rnd.nextInt(10)+5)==0) {   //IS THIS CORRECT?
                     Position p = new Position(0,0);
-                    if (nextRoad.getDirection() == Road.horizontal){
-                       p.setY(nextRoad.getOffset());
-                    } else if (nextRoad.getDirection() == Road.vertical) {
-                        p.setX(nextRoad.getOffset());
+                    if (curRoad.getDirection() == Road.horizontal){
+                       p.setY(curRoad.getOffset());
+                    } else if (curRoad.getDirection() == Road.vertical) {
+                        p.setX(curRoad.getOffset());
                     }
 
                     Car c = new Car(p,speed);
-                    nextRoad.addCar(c);
+                    curRoad.addCar(c);
                 }
             }
 
