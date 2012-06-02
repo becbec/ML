@@ -10,10 +10,10 @@ public class LState {
     private int lightDelay;                                 // Light delay?
     private int reward;
 
-    public LState (List<Integer> distToInt, List<Integer> lightState) {
+    public LState (List<Integer> distToInt, List<Integer> lightState, int lightDelay) {
         this.distToInt = distToInt;
         this.lightState = lightState;
-        lightDelay = 0;
+        this.lightDelay = lightDelay;
         reward = initReward();
     }
 
@@ -27,10 +27,6 @@ public class LState {
 
     public int getLightDelay() {
         return lightDelay;
-    }
-
-    public void setLightDelay(int lightDelay) {
-        this.lightDelay = lightDelay;
     }
 
     public int getReward() {

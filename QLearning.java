@@ -92,12 +92,6 @@ public class QLearning {
             nextBestMove = chooseNextMove(distToInt, lightState);
         }
 
-        for (int i = 0; i < lightState.size(); i++) {
-            if (lightState.get(i) == Intersection.red && distToInt.get(i) == 1 && !nextBestMove) {
-                Controller.playCount++;
-            }
-        }
-
         setBeenDelayedFor(nextBestMove);
 
         return nextBestMove;
@@ -151,8 +145,7 @@ public class QLearning {
         // State does not exist
         } else {
             //System.out.println("s is null");
-            state = new LState(distToInt, lightState);
-            state.setLightDelay(beenDelayedFor);
+            state = new LState(distToInt, lightState, beenDelayedFor);
             SAPairs.put(state, new HashMap());
             SAPairs.get(state).put(nextMove, 0.0);
         }
