@@ -27,8 +27,8 @@ public class Controller implements GLEventListener {
     boolean nextMove;
     int learningCount = 0;
     int playCount = 0;
-    int endLearning = 100000;
-    int runTime = 200000;
+    int endLearning = 100;
+    int runTime = 100;
 
     public static void main(String [] args){
     	Controller c = new Controller();
@@ -74,18 +74,27 @@ public class Controller implements GLEventListener {
 
             // Get the next move and execute it
             if (k < endLearning) { 
+            	System.out.println("light state = " + intersection.getLightState());
                 nextMove = ql.getNextMove(getClosetPos(intersection), intersection.getLightState());
             } else {
                 nextMove = ql.getBestAction(getClosetPos(intersection), intersection.getLightState());
             }
 
+            
+            
             // Update the state of the lights
             if (nextMove) {
             //if (time%100 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
                 for (int i=0; i < intersection.getNumRoads(); i++){
-                    intersection.setLightState(i, (intersection.getLightState(i)+1)%2); //toggle light state
+                	System.out.println("light state constructor = " + ql.state.getLightState());
+                	int newS = (intersection.getLightState(i)+1)%2;
+                	System.out.println("light state constructor1 = " + ql.state.getLightState());
+                    intersection.setLightState(i, newS); //toggle light state
+                    System.out.println("light state constructor2 = " + ql.state.getLightState());
                 }
             }
+            
+            
 
             // Make an obstacle
             ListIterator<Road> roadItr = intersection.getRoads().listIterator();
@@ -136,7 +145,9 @@ public class Controller implements GLEventListener {
                     }
 
                     Car c = new Car(p,speed);
-                    curRoad.addCar(c);
+                    if (curRoad.getDirection() == Road.horizontal) {
+                    	curRoad.addCar(c);
+                    }
                 }
             }
 
@@ -154,6 +165,7 @@ public class Controller implements GLEventListener {
 
             // Update the qValues
             if (k < endLearning) {
+            	System.out.println("light s = " + intersection.getLightState());
                 ql.updateQValue(getClosetPos(intersection), intersection.getLightState());
             }
 

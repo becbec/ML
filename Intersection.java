@@ -56,6 +56,7 @@ public class Intersection {
 
         // For if we continue cars moving
         while (roadItr.hasNext()) {
+        	carPos = null;
             boolean exit = false;
             Road nextRoad = roadItr.next();
             ListIterator<Car> carItr = nextRoad.getCars().listIterator();

@@ -37,7 +37,7 @@ public class LState {
     private int initReward() {
         int reward = 0;
         for (int i = 0; i < lightState.size(); i++) {
-            if (lightState.get(i) == Intersection.red && distToInt.get(i) != 9) {
+            if (lightState.get(i) == Intersection.red && distToInt.get(i) <= 1) {
                 reward = -1;
             }
         }
