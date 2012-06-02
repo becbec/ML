@@ -25,8 +25,10 @@ public class Controller implements GLEventListener {
     QLearning ql = new QLearning();
     int scale = 6;
     boolean nextMove;
-    static int learningCount = 0;
-    static int playCount = 0;
+    int learningCount = 0;
+    int playCount = 0;
+    int endLearning = 3000;
+    int runTime = 6000;
 
     public static void main(String [] args){
     	Controller c = new Controller();
@@ -50,19 +52,19 @@ public class Controller implements GLEventListener {
 		});
 
 		canvas.addGLEventListener(this);
-		FPSAnimator animator = new FPSAnimator(canvas, 20);
+		FPSAnimator animator = new FPSAnimator(canvas, 10);
         animator.start();
 	}
 	
 	private void run() {
-	    System.out.println("Hello, World");
+	    //System.out.println("Hello, World");
         int k = 0;
         Random rnd = new Random();
 
-        while(k < 12000){
+        while(k < runTime){
         	
         	// Timeout to make the simulator run at a reasonable speed.
-			try {
+        	try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -71,11 +73,11 @@ public class Controller implements GLEventListener {
             k++;
 
             // Get the next move and execute it
-            if (k < 6000) {
+            if (k < endLearning) { 
                 nextMove = ql.getNextMove(getClosetPos(intersection), intersection.getLightState());
             } else {
                 nextMove = ql.getBestAction(getClosetPos(intersection), intersection.getLightState());
-                System.out.println("YEAHHHH LEARNINNGG AND STUFF");
+                //System.out.println("YEAHHHH LEARNINNGG AND STUFF");
             }
 
             // Update the state of the lights
@@ -115,6 +117,15 @@ public class Controller implements GLEventListener {
                     	curCar.canMoveCar(carInFront, curRoad.getDirection())) {
                     	curCar.moveCar(curRoad.getDirection());
                     }
+                    
+                    // Update scores
+                    if (!curCar.canMoveCar(lights, curRoad.getDirection())) {
+                    	if (k < endLearning) {
+                    		learningCount++;
+                    	} else {
+                    		playCount++;
+                    	}
+                    }
                 }
 
                 if (time%(rnd.nextInt(10)+5)==0) {   //IS THIS CORRECT?
@@ -143,7 +154,7 @@ public class Controller implements GLEventListener {
             }
 
             // Update the qValues
-            if (k < 6000) {
+            if (k < endLearning) {
                 ql.updateQValue(getClosetPos(intersection), intersection.getLightState());
             }
 

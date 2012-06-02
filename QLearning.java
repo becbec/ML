@@ -35,12 +35,6 @@ public class QLearning {
         setBeenDelayedFor(nextMove);
         updateSAPair(distToInt, lightState, nextMove);
 
-        for (int i = 0; i < lightState.size(); i++)  {
-            if (lightState.get(i) == Intersection.red && distToInt.get(i) == 1 && !nextMove) {
-                Controller.learningCount++;
-            }
-        }
-
         return nextMove;
     }
 
@@ -49,7 +43,7 @@ public class QLearning {
 
         for (LState tmp: SAPairs.keySet()) {
             if (tmp.getDistToInt().equals(distToInt) && tmp.getLightState().equals(lightState)
-                   ){//&& tmp.getLightDelay() == beenDelayedFor) {
+                   && tmp.getLightDelay() == beenDelayedFor) {
                 s = tmp;
             }
         }
@@ -73,17 +67,17 @@ public class QLearning {
 
         for (LState tmp: SAPairs.keySet()) {
             if (tmp.getDistToInt().equals(distToInt) && tmp.getLightState().equals(lightState)
-                    ){//&& tmp.getLightDelay() == beenDelayedFor) {
+                    && tmp.getLightDelay() == beenDelayedFor) {
                 s = tmp;
             }
         }
 
         if (s != null) {
-            if (rand.nextDouble() < epsilon) {
+            //if (rand.nextDouble() < epsilon) {
                 selectedAction = true;
                 HashMap<Boolean, Double> actions = SAPairs.get(s);
                 for (Boolean key : actions.keySet()) {
-                    System.out.println("actions.get(key) = "+actions.get(key)+ "move = "+key);
+                    //System.out.println("actions.get(key) = "+actions.get(key)+ "move = "+key);
                     if (actions.get(key) > maxQ) {
                         maxQ = actions.get(key)+s.getReward();
                         nextBestMove = key;
@@ -99,17 +93,11 @@ public class QLearning {
                     nextBestMove = doubleValues.get(randomIndex);
                 }
 
-           }
+        	//}
         }
 
         if(!selectedAction) {
             nextBestMove = chooseNextMove(distToInt, lightState);
-        }
-
-        for (int i = 0; i < lightState.size(); i++)  {
-            if (lightState.get(i) == Intersection.red && distToInt.get(i) == 1 && !nextBestMove) {
-                Controller.playCount++;
-            }
         }
 
         setBeenDelayedFor(nextBestMove);
@@ -142,12 +130,12 @@ public class QLearning {
     private void updateSAPair(List<Integer> distToInt, List<Integer> lightState, Boolean nextMove) {
         state = null;
 
-        System.out.println("next move is "+nextMove);
+        //System.out.println("next move is "+nextMove);
 
         // Check to see if this state already exists
         for (LState tmp: SAPairs.keySet()) {
             if (tmp.getDistToInt().equals(distToInt) && tmp.getLightState().equals(lightState)
-                    ){//&& tmp.getLightDelay() == beenDelayedFor) {
+                    && tmp.getLightDelay() == beenDelayedFor) {
                 state = tmp;
             }
         }
@@ -156,15 +144,15 @@ public class QLearning {
         if (state != null) {
             // If the move exists
             if (SAPairs.get(state).containsKey(nextMove)) {
-                System.out.println("s-a pair exists");
+                //System.out.println("s-a pair exists");
             // State-action pair doesn't exist so add the new action and give it a start qValue
             } else {
-                System.out.println("s-a pair does not exists");
+                //System.out.println("s-a pair does not exists");
                 SAPairs.get(state).put(nextMove, 0.0);
             }
         // State does not exist
         }   else {
-            System.out.println("s is null");
+            //System.out.println("s is null");
             state = new LState(distToInt, lightState);
             state.setLightDelay(beenDelayedFor);
             SAPairs.put(state, new HashMap());

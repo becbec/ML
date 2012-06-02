@@ -23,7 +23,6 @@ public class Intersection {
         //set lights one to red, one to green
         lightState.add(green);
         lightState.add(red);
-
     }
 
     public List<Road> getRoads() {
