@@ -5,10 +5,10 @@ import java.util.*;
 // init qvalue as this? + 0.0000000000000000001 * Math.random() ) );
 
 public class QLearning {
-    private HashMap<LState, HashMap<Boolean, Double>> SAPairs;  // Maping of actions to pair to rewards
+    private HashMap<LState, HashMap<Boolean, Double>> SAPairs; // Maping of actions to pair to rewards
     private LState state;                                      // Current state we are looking at
-    private boolean nextMove;                                   // Store the move that was made
-    private int beenDelayedFor;                                   // Delay ?
+    private boolean nextMove;                                  // Store the move that was made
+    private int beenDelayedFor;                                // How long you have been delayed for
 
     private final int delayTime = 3;                           // Length of time lights must stay red
     private final double gamma = 0.9;                          // Discount factor
@@ -32,17 +32,13 @@ public class QLearning {
 
     public boolean getNextMove(List<Integer> distToInt, List<Integer> lightState) {
         nextMove = chooseNextMove(distToInt, lightState);
-
+        setBeenDelayedFor(nextMove);
         updateSAPair(distToInt, lightState, nextMove);
 
         for (int i = 0; i < lightState.size(); i++)  {
             if (lightState.get(i) == Intersection.red && distToInt.get(i) == 1 && !nextMove) {
                 Controller.learningCount++;
             }
-        }
-
-        if (nextMove == true) {
-            System.out.println("nextMove is true");
         }
 
         return nextMove;
@@ -53,19 +49,16 @@ public class QLearning {
 
         for (LState tmp: SAPairs.keySet()) {
             if (tmp.getDistToInt().equals(distToInt) && tmp.getLightState().equals(lightState)
-                   ) {//&& tmp.getLightDelay() == (beenDelayedFor-1)%3) {
-                s = tmp; // TODO: add light delay as a check also?
+                   ){//&& tmp.getLightDelay() == beenDelayedFor) {
+                s = tmp;
             }
         }
 
-        // Update the qValue;
+        // Update the qValue in the hash;
         int reward = state.getReward();
         double currentQ = SAPairs.get(state).get(nextMove);
         //double newQ = currentQ + alpha * (reward + gamma * maxQ(s) - currentQ);
         double newQ = (1-alpha)*currentQ + alpha * (reward + gamma *maxQ(s));
-
-        System.out.println("newQ = "+newQ);
-        // Update in the hash
         SAPairs.get(state).put(nextMove, newQ);
     }
 
@@ -110,7 +103,6 @@ public class QLearning {
         }
 
         if(!selectedAction) {
-            System.out.println("RANDOM Choice !" );
             nextBestMove = chooseNextMove(distToInt, lightState);
         }
 
@@ -120,7 +112,31 @@ public class QLearning {
             }
         }
 
+        setBeenDelayedFor(nextBestMove);
+
         return nextBestMove;
+    }
+
+    private Boolean chooseNextMove(List<Integer> distToInt, List<Integer> lightState) {
+        Random random = new Random();
+        double probability = random.nextDouble();
+        Boolean nextMove = false;
+
+        if (probability < epsilon) {
+            for (int i = 0; i < distToInt.size(); i++) {
+                // If there is a car queued at the intersection then switch the lights
+                if (distToInt.get(i) == 1 && lightState.get(i) == Intersection.red
+                        && beenDelayedFor >= delayTime) {
+                    nextMove = true;
+                }
+            }
+        } else {
+            if (random.nextDouble() < 0.5 && beenDelayedFor >= delayTime) {
+                nextMove = true;
+            }
+        }
+
+        return nextMove;
     }
 
     private void updateSAPair(List<Integer> distToInt, List<Integer> lightState, Boolean nextMove) {
@@ -131,8 +147,8 @@ public class QLearning {
         // Check to see if this state already exists
         for (LState tmp: SAPairs.keySet()) {
             if (tmp.getDistToInt().equals(distToInt) && tmp.getLightState().equals(lightState)
-                    ){ //&& tmp.getLightDelay() == beenDelayedFor) {
-                state = tmp;   // TODO: added lightdelay also?
+                    ){//&& tmp.getLightDelay() == beenDelayedFor) {
+                state = tmp;
             }
         }
 
@@ -146,13 +162,10 @@ public class QLearning {
                 System.out.println("s-a pair does not exists");
                 SAPairs.get(state).put(nextMove, 0.0);
             }
-            // State does not exist
+        // State does not exist
         }   else {
             System.out.println("s is null");
             state = new LState(distToInt, lightState);
-            if (beenDelayedFor > 3) {
-                beenDelayedFor = 3;
-            }
             state.setLightDelay(beenDelayedFor);
             SAPairs.put(state, new HashMap());
             SAPairs.get(state).put(nextMove, 0.0);
@@ -174,39 +187,14 @@ public class QLearning {
             Arrays.sort(nums.toArray());
             return nums.get(nums.size()-1);
         }
-
     }
 
-    private Boolean chooseNextMove(List<Integer> distToInt, List<Integer> lightState) {
-        //TODO: include light delay in this function...
-        Random random = new Random();
-        double probability = random.nextDouble();
-        Boolean nextMove = false;
-        System.out.println("light delay = "+beenDelayedFor);
-
-        if (probability < epsilon) {
-            System.out.println("choosing optimally");
-            for (int i = 0; i < distToInt.size(); i++) {
-                // If there is a car queued at the intersection then switch the lights
-                if (distToInt.get(i) == 1 && lightState.get(i) == Intersection.red
-                        && beenDelayedFor >= delayTime) {
-                    nextMove = true;
-                }
-            }
-        } else {
-            System.out.println("NOTTT");
-            if (random.nextDouble() < 0.5 && beenDelayedFor >= delayTime) {
-                nextMove = true;
-            }
-        }
-
+    private void setBeenDelayedFor(boolean nextMove) {
         // Set the beenDelayedFor counter
         if (nextMove) {
             beenDelayedFor = 0;
-        } else {
+        } else if (beenDelayedFor < delayTime) {
             beenDelayedFor++;
         }
-
-        return nextMove;
     }
 }
