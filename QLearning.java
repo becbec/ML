@@ -58,11 +58,11 @@ public class QLearning {
         double currentQ = SAPairs.get(state).get(nextMove);
         double newQ = currentQ + alpha * (reward + gamma * maxQ(s) - currentQ);
         //double newQ = (1 - alpha) * currentQ + alpha * (reward + gamma * maxQ(s));
-        System.out.println("s     dist = " + s.getDistToInt() + " lights     = " +
-        					s.getLightState() + "delay = " + s.getLightDelay());
-        System.out.println("state dist = " + state.getDistToInt() + " lightstate = " +
-							state.getLightState() + "delay = " + state.getLightDelay());
-        System.out.println("reward = " + reward + " currentQ = " + currentQ + " newQ = " + newQ);
+        //System.out.println("s     dist = " + s.getDistToInt() + " lights     = " +
+        //					s.getLightState() + "delay = " + s.getLightDelay());
+        //System.out.println("state dist = " + state.getDistToInt() + " lightstate = " +
+		//					state.getLightState() + "delay = " + state.getLightDelay());
+        //System.out.println("reward = " + reward + " currentQ = " + currentQ + " newQ = " + newQ);
         SAPairs.get(state).put(nextMove, newQ);
     }
 
