@@ -27,8 +27,8 @@ public class Controller implements GLEventListener {
     boolean nextMove;
     int learningCount = 0;
     int playCount = 0;
-    int endLearning = 3000;
-    int runTime = 6000;
+    int endLearning = 100000;
+    int runTime = 200000;
 
     public static void main(String [] args){
     	Controller c = new Controller();

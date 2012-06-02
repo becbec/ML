@@ -48,11 +48,15 @@ public class QLearning {
             }
         }
 
+        if (s == null) {
+            s = new LState(distToInt, lightState, beenDelayedFor);
+        }
+
         // Update the qValue in the hash;
-        int reward = state.getReward();
+        int reward = s.getReward();
         double currentQ = SAPairs.get(state).get(nextMove);
-        //double newQ = currentQ + alpha * (reward + gamma * maxQ(s) - currentQ);
-        double newQ = (1 - alpha) * currentQ + alpha * (reward + gamma * maxQ(s));
+        double newQ = currentQ + alpha * (reward + gamma * maxQ(s) - currentQ);
+        //double newQ = (1 - alpha) * currentQ + alpha * (reward + gamma * maxQ(s));
         SAPairs.get(state).put(nextMove, newQ);
     }
 
@@ -90,6 +94,10 @@ public class QLearning {
             }
         } else {
             nextBestMove = chooseNextMove(distToInt, lightState);
+        }
+
+        if (beenDelayedFor < delayTime && nextBestMove) {
+            nextBestMove = false;
         }
 
         setBeenDelayedFor(nextBestMove);
