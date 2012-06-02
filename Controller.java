@@ -77,7 +77,6 @@ public class Controller implements GLEventListener {
                 nextMove = ql.getNextMove(getClosetPos(intersection), intersection.getLightState());
             } else {
                 nextMove = ql.getBestAction(getClosetPos(intersection), intersection.getLightState());
-                //System.out.println("YEAHHHH LEARNINNGG AND STUFF");
             }
 
             // Update the state of the lights
