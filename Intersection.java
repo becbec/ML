@@ -14,7 +14,7 @@ public class Intersection {
 
     public Intersection(Position p){    //for now it just creates 2 roads, we can change this later
         this.pos = p;
-        roads = new LinkedList<Road>();
+        roads = new ArrayList<Road>();
         lightState = new Vector<Integer>();
         Road r = new Road(Road.horizontal,pos.getY());
         roads.add(r);
@@ -34,11 +34,17 @@ public class Intersection {
     }
 
     public int getLightState(int index){
-        return this.lightState.get(index);
+        int i = this.lightState.get(index);
+        return i;
     }
 
     public List<Integer> getLightState() {
-        return lightState;
+    	List<Integer> l = new ArrayList<Integer>();
+    	for(Integer i: lightState) {
+    		Integer temp = new Integer(i);
+    		l.add(temp);
+    	}
+        return l;
     }
 
     public void setLightState(int index, int state) {
