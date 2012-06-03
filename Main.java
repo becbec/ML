@@ -54,7 +54,7 @@ public class Main {
                     //nextCar.moveCar(obstacle, nextRoad.getDirection());
 
                     //remove car if necessary
-                    if (nextCar.removeCar(intersection.getPos(),nextRoad.getDirection())) {
+                    if (nextCar.removeCar(nextRoad.getDirection())) {
                         nextRoad.removeCar();
                         obstacle = new Position(-1,-1);
                     } else {

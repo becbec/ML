@@ -149,7 +149,7 @@ public class Controller implements GLEventListener {
                 Road nextRoad = roads.get(j);
                 for (int i = 0; i < nextRoad.getCars().size(); i++) {
                     Car nextCar = nextRoad.getCars().get(i);
-                    if (nextCar.removeCar(intersection.getPos(),nextRoad.getDirection())) {
+                    if (nextCar.removeCar(nextRoad.getDirection())) {
                         nextRoad.removeCar();
                     }
                 }
