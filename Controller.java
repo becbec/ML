@@ -27,8 +27,8 @@ public class Controller implements GLEventListener {
     boolean nextMove;
     int learningCount = 0;
     int playCount = 0;
-    int endLearning = 10000;
-    int runTime = 20000;
+    int endLearning = 5000;
+    int runTime = 10000;
 
     public static void main(String [] args){
     	Controller c = new Controller();
@@ -83,7 +83,6 @@ public class Controller implements GLEventListener {
             
             // Update the state of the lights
             if (nextMove) {
-            //if (time%100 == 0) {  //if time multiple of 10, change all lights TODO: update this later to use ML
                 for (int i=0; i < intersection.getNumRoads(); i++){
                 	int newS = (intersection.getLightState(i)+1)%2;
                     intersection.setLightState(i, newS); //toggle light state
@@ -131,15 +130,14 @@ public class Controller implements GLEventListener {
                     	}
                     }
                 }
-
-                if (time%(rnd.nextInt(10)+5)==0) {   //IS THIS CORRECT?
+                //
+                if (time%(rnd.nextInt(10)+5)==0 ) {
                     Position p = new Position(0,0);
-                    if (curRoad.getDirection() == Road.horizontal){
-                       p.setY(curRoad.getOffset());
-                    } else if (curRoad.getDirection() == Road.vertical) {
+                    if (curRoad.getDirection() == Road.horizontal) {
+                        p.setY(curRoad.getOffset());
+                    }   else if (curRoad.getDirection() == Road.vertical) {
                         p.setX(curRoad.getOffset());
                     }
-
                     Car c = new Car(p,speed);
                     curRoad.addCar(c);
                 }

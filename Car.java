@@ -51,7 +51,7 @@ public class Car {
 
     //for now cars only travel in increasing direction.
     // If we decide to add two-way roads then we will need to change road to have 4 directions rather than 2
-    public void moveCar(int roadDirection) { //obstacle could refer to car in front or red light in front (set to -1,-1 if no obstacle in front)
+    public void moveCar(int roadDirection) {
         Position temp = null;
         if (roadDirection == Road.horizontal) {
             this.setPos(new Position(this.getPos().getX()+this.speed, this.getPos().getY()));
@@ -60,7 +60,7 @@ public class Car {
         }
     }
 
-    public boolean removeCar(Position edgeBoader, int roadDirection) {
+    public boolean removeCar(int roadDirection) {
         if (roadDirection == Road.horizontal) {
             if (this.getPos().getX() > 100) {
                 return true;
@@ -73,19 +73,5 @@ public class Car {
 
         return false;
     }
-
-    /*public boolean removeCar(Position intersectionPos, int roadDirection) {
-        if (roadDirection == Road.horizontal) {
-          if (this.pos.getX() > intersectionPos.getX()) {
-           return true;
-          }
-        } else if (roadDirection == Road.vertical) {
-            if (this.pos.getY() > intersectionPos.getY()) {
-              return true;
-            }
-        }
-
-        return false;
-    }*/
 
 }

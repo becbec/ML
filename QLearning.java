@@ -7,7 +7,7 @@ import java.util.*;
 
 public class QLearning {
     private HashMap<LState, HashMap<Boolean, Double>> SAPairs; // Maping of actions to pair to rewards
-    public LState state;                                      // Current state we are looking at
+    public LState state;                                       // Current state we are looking at
     private boolean nextMove;                                  // Store the move that was made
     private int beenDelayedFor;                                // How long you have been delayed for
 
@@ -57,12 +57,6 @@ public class QLearning {
         int reward = s.getReward();
         double currentQ = SAPairs.get(state).get(nextMove);
         double newQ = currentQ + alpha * (reward + gamma * maxQ(s) - currentQ);
-        //double newQ = (1 - alpha) * currentQ + alpha * (reward + gamma * maxQ(s));
-        //System.out.println("s     dist = " + s.getDistToInt() + " lights     = " +
-        //					s.getLightState() + "delay = " + s.getLightDelay());
-        //System.out.println("state dist = " + state.getDistToInt() + " lightstate = " +
-		//					state.getLightState() + "delay = " + state.getLightDelay());
-        //System.out.println("reward = " + reward + " currentQ = " + currentQ + " newQ = " + newQ);
         SAPairs.get(state).put(nextMove, newQ);
     }
 
@@ -83,9 +77,8 @@ public class QLearning {
         if (s != null) {
             HashMap<Boolean, Double> actions = SAPairs.get(s);
             for (Boolean key : actions.keySet()) {
-                //System.out.println("actions.get(key) = " + actions.get(key) + "move = " + key);
                 if (actions.get(key) > maxQ) {
-                    maxQ = actions.get(key);// + s.getReward();
+                    maxQ = actions.get(key);
                     nextBestMove = key;
                 } else if (actions.get(key) == maxQ) {
                     maxDV++;
@@ -107,7 +100,6 @@ public class QLearning {
         }
 
         setBeenDelayedFor(nextBestMove);
-        //state = s;
 
         return nextBestMove;
     }
@@ -151,15 +143,13 @@ public class QLearning {
         if (state != null) {
             // If the move exists
             if (SAPairs.get(state).containsKey(nextMove)) {
-                //System.out.println("s-a pair exists");
+                // Do nothing
             // State-action pair doesn't exist so add the new action and give it a start qValue
             } else {
-                //System.out.println("s-a pair does not exists");
                 SAPairs.get(state).put(nextMove, 0.0);
             }
         // State does not exist
         } else {
-            //System.out.println("s is null");
             state = new LState(distToInt, lightState, beenDelayedFor);
             SAPairs.put(state, new HashMap<Boolean, Double>());
             SAPairs.get(state).put(nextMove, 0.0);
@@ -169,7 +159,6 @@ public class QLearning {
 
     private double maxQ(LState s) {
         LinkedList<Double> nums = new LinkedList<Double>();
-        //double maxQ = 0.0;
 
         if (SAPairs.get(s) == null) {
             return 0.0;

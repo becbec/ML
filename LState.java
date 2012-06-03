@@ -7,7 +7,7 @@ import java.util.List;
 public class LState {
     private List<Integer> distToInt;                        // Distance of closet car to intersection from each road
     private List<Integer> lightState;                       // What the lights are on at each road
-    private int lightDelay;                                 // Light delay?
+    private int lightDelay;                                 // Light delay
     private int reward;
 
     public LState (List<Integer> distToInt, List<Integer> lightState, int lightDelay) {
@@ -53,8 +53,4 @@ public class LState {
         }
         return false;
     }
-
-
-
-
 }
